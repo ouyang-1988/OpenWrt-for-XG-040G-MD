@@ -62,18 +62,32 @@ jobs:
           python3 -m pip install --upgrade pip setuptools wheel
           python3 -m pip install Unidecode
 
-      - name: Clone OpenWrt source code and apply XG-040G-MD patch files
+      - name: 克隆官方源码并应用补丁
         run: |
+          # 1. 克隆源码
           git clone --depth 1 --branch "$REPO_BRANCH" "$REPO_URL" openwrt
-          cd patch
-          [ -e airoha/01_leds ] && cp -f airoha/01_leds ../openwrt/target/linux/airoha/an7581/base-files/etc/board.d/01_leds
-          [ -e airoha/02_network ] && cp -f airoha/02_network ../openwrt/target/linux/airoha/an7581/base-files/etc/board.d/02_network
-          [ -e airoha/an7581.mk ] && cp -f airoha/an7581.mk ../openwrt/target/linux/airoha/image/an7581.mk
-          [ -e airoha/an7581-nokia_xg-040g-md.dts ] && cp -f airoha/an7581-nokia_xg-040g-md.dts ../openwrt/target/linux/airoha/dts/an7581-nokia_xg-040g-md.dts
-          [ -d "airoha/patches-6.12" ] && cp -f airoha/patches-6.12/*.patch ../openwrt/target/linux/airoha/patches-6.12/
-          [ -d "mediatek/patches-6.12" ] && cp -f mediatek/patches-6.12/*.patch ../openwrt/target/linux/mediatek/patches-6.12/
-          [ -d "generic/pending-6.12" ] && cp -f generic/pending-6.12/*.patch ../openwrt/target/linux/generic/pending-6.12/
-
+          
+          # 2. 强制创建目标目录
+          mkdir -p openwrt/target/linux/airoha/an7581/base-files/etc/board.d/
+          mkdir -p openwrt/target/linux/airoha/image/
+          mkdir -p openwrt/target/linux/airoha/dts/
+          mkdir -p openwrt/target/linux/airoha/patches-6.12/
+          mkdir -p openwrt/target/linux/mediatek/patches-6.12/
+          mkdir -p openwrt/target/linux/generic/pending-6.12/
+          
+          # 3. 按照你的截图结构进行拷贝
+          # 拷贝 airoha 根目录下的文件
+          cp -f patch/airoha/01_leds openwrt/target/linux/airoha/an7581/base-files/etc/board.d/01_leds
+          cp -f patch/airoha/02_network openwrt/target/linux/airoha/an7581/base-files/etc/board.d/02_network
+          cp -f patch/airoha/an7581.mk openwrt/target/linux/airoha/image/an7581.mk
+          cp -f patch/airoha/an7581-nokia_xg-040g-md.dts openwrt/target/linux/airoha/dts/an7581-nokia_xg-040g-md.dts
+          
+          # 拷贝各个子目录下的补丁 (.patch)
+          [ -d "patch/airoha/patches-6.12" ] && cp -f patch/airoha/patches-6.12/*.patch openwrt/target/linux/airoha/patches-6.12/
+          [ -d "patch/mediatek/patches-6.12" ] && cp -f patch/mediatek/patches-6.12/*.patch openwrt/target/linux/mediatek/patches-6.12/
+          [ -d "patch/generic/pending-6.12" ] && cp -f patch/generic/pending-6.12/*.patch openwrt/target/linux/generic/pending-6.12/
+          
+          echo "补丁与目录结构已完全对齐，应用成功！"
 
       - name: Update & Install feeds
         working-directory: ./openwrt
