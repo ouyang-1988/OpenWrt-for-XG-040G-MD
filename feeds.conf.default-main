@@ -1,2 +1,4 @@
 src-git packages https://github.com/openwrt/packages.git;master
 src-git luci https://github.com/openwrt/luci.git;master
+# 新增 Aurora 主题源
+src-git aurora https://github.com/eamonxg/luci-theme-aurora.git;main
