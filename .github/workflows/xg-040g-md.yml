@@ -89,6 +89,12 @@ jobs:
           
           echo "补丁与目录结构已完全对齐，应用成功！"
 
+      - name: 强行加入 Aurora 主题
+        run: |
+          # 进入源码的 package 目录直接克隆主题，这样最稳
+          git clone --depth 1 https://github.com/eamonxg/luci-theme-aurora.git openwrt/package/luci-theme-aurora
+
+
       - name: Update & Install feeds
         working-directory: ./openwrt
         run: |
